@@ -8,9 +8,12 @@ variable "ec2_ami_id" {
     default     = "ami-0ecb62995f68bb549"  # Ubuntu AMI
 }
 
-variable "ec2_root_volume_size" {
+variable "ec2_default_root_volume_size" {
     type        = number
-    default     = 15
+    default     = 10
 }
 
-
+variable "env" {
+    type        = string
+    default     = "dev"
+}
