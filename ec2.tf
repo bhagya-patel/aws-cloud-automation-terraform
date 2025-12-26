@@ -50,20 +50,27 @@ resource "aws_security_group" "my_sg" {
 # ec2 instance (server)
 
 resource "aws_instance" "my_instance" {
+    for_each = tomap({
+        "bhagya1-ec2-instance" = "t3.micro"
+        "new_ec2-instance"   = "t3.micro"
+    })
+
+    depends_on = [ aws_security_group.my_sg, aws_key_pair.my_key ]
+
     ami           = var.ec2_ami_id
-    instance_type = var.ec2_instance_type
+    instance_type = each.value
     key_name      = aws_key_pair.my_key.key_name
     vpc_security_group_ids = [aws_security_group.my_sg.id]
 
     user_data = file("install_nginx.sh")
 
     root_block_device {
-      volume_size = var.ec2_root_volume_size
+      volume_size = var.env=="prd" ? 20 : var.ec2_default_root_volume_size
       volume_type = "gp3"
     }
 
     tags = {
-        Name = "bhagya1-ec2-instance"
+        Name = each.key
     }
 
 }
